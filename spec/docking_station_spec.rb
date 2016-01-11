@@ -33,7 +33,15 @@ let(:bike) {double :bike}
       20.times{docking_station.dock(bike)}
       expect{docking_station.dock(bike)}.to raise_error "Docking station full"
     end
+  end
 
+  it 'can change docking station capacity' do
+    docking_station.set_capacity(22)
+    expect(docking_station.capacity).to eq 22
+  end
+
+  it 'default capacity is 20' do
+    expect(docking_station.capacity).to eq 20
   end
 
 
