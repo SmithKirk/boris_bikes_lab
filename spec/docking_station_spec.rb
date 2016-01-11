@@ -5,7 +5,10 @@ subject(:docking_station) {described_class.new}
 let(:bike) {double :bike}
 
   describe '#release_bike' do
-    it {is_expected.to respond_to :release_bike}
+    before do
+      allow(bike).to receive(:working).and_return true
+    end
+
 
     it 'releases a working bike' do
       docking_station.dock(bike)
@@ -18,12 +21,6 @@ let(:bike) {double :bike}
     end
   end
 
-
-  it {is_expected.to respond_to(:dock).with(1).argument}
-
-  it {is_expected.to respond_to(:bikes)}
-
-
   describe '#dock' do
     it 'returns a docked bike' do
       expect(docking_station.dock(bike)).to include bike
@@ -32,6 +29,17 @@ let(:bike) {double :bike}
     it 'cannot exceed docking capacity' do
       20.times{docking_station.dock(bike)}
       expect{docking_station.dock(bike)}.to raise_error "Docking station full"
+    end
+
+    context 'broken bike' do
+      before do
+        allow(bike).to receive(:working).and_return false
+        docking_station.dock(bike)
+      end
+
+      it 'broken bikes are not released' do
+        expect{docking_station.release_bike(bike)}.to raise_error "Bike broken"
+      end
     end
   end
 
